@@ -1,0 +1,37 @@
+#ifndef TI_SHA_H_
+#define TI_SHA_H_
+
+#include <stdint.h>
+
+#define lastchunk 16*Nblocks
+
+#define SHA_256  0x1
+#define SHA_224  0x0
+   
+/*** SHA Function Macros *******************************/
+
+#define SR(x,a)          (x >> a)                         /*Shift right Function - Shift x by a  */
+#define ROTR(x,n)        (( x >> n ) | ( x << (32 - n ))) /* Rotate Right Function - rotate x by n */
+#define ROTR25(x)		 (((x >> 9) >> 16) | ( x << 7 ))
+
+/* Algoorithm defined logical functions */
+#define Ch(x , y, z)    ((x & y) ^ (~x & z))
+#define Maj(x, y, z)    ((x & y) ^ (x & z) ^ ( y & z))
+/*Alternate Ch and MAJ functions that could be faster.*/  //With IAR optimixations, this method is not faster.
+//#define Ch(x, y, z)      (((x) & ((y) ^ (z))) ^ (z))
+//#define Maj(x, y, z)     (((x) & ((y) | (z))) | ((y) & (z)))
+#define SIGZ(x)         (ROTR(x,2) ^ ROTR(x,13) ^ ROTR(x,22))
+#define SIG1(x)          (ROTR(x,6) ^ ROTR(x,11) ^ ROTR(x,25))   //(ROTR(x,6)  ^ ROTR(x,11) ^ ROTR25(x))
+#define sigmaZ(x)       (ROTR(x,7) ^ ROTR(x,18) ^ SR(x,3))
+#define sigma1(x)       (ROTR(x,17) ^ ROTR(x,19) ^ SR(x,10))
+
+void shaHelper( uint32_t * message, uint32_t * Hash);
+
+extern void SHA_2( uint32_t *Message, uint32_t MessageLengthBytes,
+		uint32_t *Hash, short mode);
+
+
+
+
+
+#endif /* SHA_H_ */
